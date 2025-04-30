@@ -16,28 +16,29 @@ LONGBENCH_DATASETS = [
 
 
 class BaseLongBenchTask(AbsTaskRetrieval):
-    metadata = TaskMetadata(
-        name='',
-        description='',
-        reference='http://example.com',
-        type='Retrieval',
-        category='p2p',
-        modalities=['text'],
-        eval_splits=['test'],
-        eval_langs=['eng-ENG'],
-        main_score='ndcg_at_10',
-        dataset={
-            "path": "",
-            "revision": "",
-        }
-    )
-    
     def __init__(self, *args, **kwargs):
-        self.data_loaded = False
-        self.metadata.name = self.__class__.__name__
         super().__init__()
-
+        self.data_loaded = False
         
+    @property
+    def metadata(self):
+        print(f'Asked for {self.__class__.__name__} metadata')
+        return TaskMetadata(
+            name=self.__class__.__name__,
+            description='',
+            reference='http://example.com',
+            type='Retrieval',
+            category='s2p',
+            modalities=['text'],
+            eval_splits=['test'],
+            eval_langs=['eng-ENG'],
+            main_score='ndcg_at_10',
+            dataset={
+                "path": "",
+                "revision": "",
+            }
+        )
+
     def load_data(self):
         data = load_dataset(
             'THUDM/LongBench',
@@ -48,9 +49,9 @@ class BaseLongBenchTask(AbsTaskRetrieval):
         queries = data['input']
         passages = data['context']
 
-        self.queries = {f'qid{i}': q for i, q in enumerate(queries)}
-        self.corpus = {f'pid{i}': {'text': p} for i, p in enumerate(passages)}
-        self.relevant_docs = {f'qid{i}': {f'pid{i}'} for i in range(len(queries))}
+        self.queries = {'test': {f'qid{i}': q for i, q in enumerate(queries)}}
+        self.corpus = {'test': {f'pid{i}': {'text': p} for i, p in enumerate(passages)}}
+        self.relevant_docs = {'test': {f'qid{i}': {f'pid{i}': 1} for i in range(len(queries))}}
         self.data_loaded = True
 
 
@@ -61,7 +62,6 @@ for task_name in LONGBENCH_DATASETS:
         task_name,
         (BaseLongBenchTask,),
         {
-            '__name__': task_name,
             '__init__': (lambda task_name=task_name: 
                          lambda self, *args, **kwargs: 
                          super(TASK_CLASSES[task_name], self).__init__(*args, **kwargs))()
