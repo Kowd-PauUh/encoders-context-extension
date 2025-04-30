@@ -91,4 +91,8 @@ def extend_context(
     sentence_transformer._first_module().tokenizer.model_max_length = weight.shape[0] - offset
     sentence_transformer.max_seq_length = weight.shape[0] - offset
 
+    # save the model if necessary
+    if output_dir is not None:
+        sentence_transformer.save(output_dir)
+
     return sentence_transformer
