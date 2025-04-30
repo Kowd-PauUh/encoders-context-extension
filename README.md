@@ -1,2 +1,2 @@
-# encoders-context-extension
-Official implementation of "Zero-Training Context Extension for Transformer Encoders via Positional Embeddings Approximation"
+# Zero-Training Context Extension for Transformer Encoders via Positional Embeddings Approximation
+Official implementation of "Zero-Training Context Extension for Transformer Encoders via Positional Embeddings Approximation". Paper preprint is coming soon.
