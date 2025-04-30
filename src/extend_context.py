@@ -1,3 +1,5 @@
+import torch
+import torch.nn as nn
 from sentence_transformers import SentenceTransformer
 
 
@@ -37,8 +39,24 @@ def extend_context(
     embeddings = model
     for attr_name in embeddings_attr_name.split('.'):
         embeddings = getattr(embeddings, attr_name)
-    weight = embeddings.weight
+    weight = embeddings.weight.clone().detach()
 
     affected_embeddings_num = weight.shape[0] - offset
 
-    
+    # approximate new positional embeddings as means between
+    # two consecutive embeddings of the original model
+    means = (weight[offset:-1] + weight[offset+1:]) / 2
+    stretched_weight = torch.empty(
+        (weight.shape[0] - offset + means.shape[0], weight.shape[1]),
+        dtype=weight.dtype,
+        device=weight.device
+    )
+    stretched_weight[0::2] = weight[offset:]
+    stretched_weight[1::2] = means
+    weight = torch.vstack(
+        [
+            weight[:offset],  # preserve embeddings within offset
+            stretched_weight,
+            weight[-1:]       # add last embedding as a copy of one before last
+        ]
+    )
