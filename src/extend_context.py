@@ -6,7 +6,7 @@ from sentence_transformers import SentenceTransformer
 def extend_context(
     model_name_or_path: str,
     embeddings_attr_name: str = 'embeddings.position_embeddings',
-    offset: int,
+    offset: int = 0,
     output_dir: str | None = None,
     model_kwargs: dict = {},
 ) -> SentenceTransformer:
@@ -24,10 +24,15 @@ def extend_context(
     model_name_or_path : str
         Path to the sentence transformer or the HF model name to which
         the function has to be applied.
-    embeddings_attr_name : str
-        Path to the model attribute with positional embeddings weights.
-    offset : str
+    embeddings_attr_name : str, optional
+        Path to the transformer model attribute with positional embeddings
+        weights. Default is "embeddings.position_embeddings".
+    offset : str, optional
         Number of first positional embeddings that will remain unaffected.
+        Some of the models, such as RoBERTa has additional embeddings
+        at the beginning, which are not used for embedding positions of 
+        actual tokens, so in the case of RoBERTa we would set this to 2.
+        Default is 0.
     output_dir : str | None, optional
         Output directory where the modified model has to be saved. If set
         to None, model will not be saved. Default is None.
