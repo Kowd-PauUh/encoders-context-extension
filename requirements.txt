@@ -6,6 +6,9 @@ sentence-transformers
 mteb
 datasets
 
+# cli
+fire
+
 # other
 jupyter
 seaborn
