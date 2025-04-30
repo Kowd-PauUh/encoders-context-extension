@@ -60,3 +60,19 @@ def extend_context(
             weight[-1:]       # add last embedding as a copy of one before last
         ]
     )
+
+    # initialize new embeddings
+    embeddings = nn.Embedding(
+        weight.shape[0],
+        weight.shape[1],
+        padding_idx=embeddings.padding_idx
+    )
+    embeddings.weight.data = weight
+
+    # set new embeddings
+    *holder_attrs, target_attr_name = embeddings_attr_name.split('.')
+    embeddings_holder = model
+    for attr_name in holder_attrs:
+        # get to the object that holds embeddings
+        embeddings_holder = getattr(embeddings_holder, attr_name)
+    setattr(embeddings_holder, target_attr_name, embeddings)
