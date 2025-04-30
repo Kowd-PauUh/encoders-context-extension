@@ -11,9 +11,13 @@ def extend_context(
     model_kwargs: dict = {},
 ) -> SentenceTransformer:
     """
-    Stretches model position embeddings starting from a given offset.
-    The number of the new position embeddings is expressed as:
+    Stretches model positional embeddings starting from a given offset.
+    If the number of positional embeddings in original model is equal
+    `max_position_embeddings`, then the number of new embeddings is 
+    expressed as:
             offset + (max_position_embeddings - offset) * 2
+    Model maximum sequence length is then defined as:
+                (max_position_embeddings - offset) * 2
 
     Parameters
     ----------
@@ -40,8 +44,6 @@ def extend_context(
     for attr_name in embeddings_attr_name.split('.'):
         embeddings = getattr(embeddings, attr_name)
     weight = embeddings.weight.clone().detach()
-
-    affected_embeddings_num = weight.shape[0] - offset
 
     # approximate new positional embeddings as means between
     # two consecutive embeddings of the original model
@@ -76,3 +78,17 @@ def extend_context(
         # get to the object that holds embeddings
         embeddings_holder = getattr(embeddings_holder, attr_name)
     setattr(embeddings_holder, target_attr_name, embeddings)
+
+    # update model with regard to new embeddings
+    embeddings_holder.register_buffer(
+        'token_type_ids',
+        torch.zeros(
+            (model.config.type_vocab_size, weight.shape[0]),
+            dtype=torch.long
+        )
+    )
+    model.config.max_position_embeddings = weight.shape[0]
+    sentence_transformer._first_module().tokenizer.model_max_length = weight.shape[0] - offset
+    sentence_transformer.max_seq_length = weight.shape[0] - offset
+
+    return sentence_transformer
