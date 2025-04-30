@@ -1,3 +1,11 @@
+# modelling
 torch
 sentence-transformers
+
+# benchmarking
 mteb
+datasets
+
+# other
+jupyter
+seaborn
