@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 from sentence_transformers import SentenceTransformer
+from fire import Fire
 
 
 def extend_context(
@@ -101,3 +102,7 @@ def extend_context(
         sentence_transformer.save(output_dir)
 
     return sentence_transformer
+
+
+if __name__ == '__main__':
+    Fire(extend_context)
