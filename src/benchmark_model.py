@@ -10,15 +10,13 @@ from sentence_transformers import SentenceTransformer
 import mteb
 from fire import Fire
 
-from longbench_tasks import LONGBENCH_TASKS
-
 
 TASK_LIST = [
     'LEMBSummScreenFDRetrieval',
     'LEMBQMSumRetrieval',
     'LEMBWikimQARetrieval',
     'LEMBNarrativeQARetrieval'
-] + list(LONGBENCH_TASKS.keys())
+]
 
 
 def benchmark_model(
@@ -31,14 +29,8 @@ def benchmark_model(
     device = model_kwargs.pop('device', 'cuda' if torch.cuda.is_available() else 'cpu')
     model = SentenceTransformer(model_name_or_path, device=device, **model_kwargs)
 
-    # prepare tasks
-    mteb_tasks = [t for t in tasks if t not in LONGBENCH_TASKS]
-    if mteb_tasks:
-        mteb_tasks = mteb.get_tasks(tasks=mteb_tasks)
-    longbench_tasks = [LONGBENCH_TASKS[t] for t in tasks if t in LONGBENCH_TASKS]
-    tasks = longbench_tasks + list(mteb_tasks)
-
     # run the evaluation
+    tasks = mteb.get_tasks(tasks=tasks)
     evaluation = mteb.MTEB(tasks=tasks)
     results = evaluation.run(model)
 
