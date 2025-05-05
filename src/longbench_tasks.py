@@ -20,7 +20,6 @@ class BaseLongBenchTask(AbsTaskRetrieval):
         
     @property
     def metadata(self):
-        print(f'Asked for {self.__class__.__name__} metadata')
         return TaskMetadata(
             name=self.__class__.__name__,
             description='',
