@@ -16,8 +16,8 @@
 Script for extending encoder context. CLI is enabled.
 
 Example:
->>> python3 src/extend_context.py --model_name_or_path="intfloat/e5-large-v2" --offset=0 --output_dir="idanylenko/e5-large-v2-ctx1024"
->>> python3 src/extend_context.py --model_name_or_path="FacebookAI/roberta-base" --offset=2 --output_dir="idanylenko/roberta-base-ctx1024"
+>>> python3 src/linear_interpolation.py --model_name_or_path="intfloat/e5-large-v2" --offset=0 --output_dir="idanylenko/e5-large-v2-ctx1024"
+>>> python3 src/linear_interpolation.py --model_name_or_path="FacebookAI/roberta-base" --offset=2 --output_dir="idanylenko/roberta-base-ctx1024"
 """
 
 import torch
