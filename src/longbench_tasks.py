@@ -5,13 +5,11 @@ from datasets import load_dataset
 
 
 LONGBENCH_DATASETS = [
-    "hotpotqa", "2wikimqa", "musique", 
-    "dureader", "narrativeqa", "qasper",
-    "multifieldqa_en", "multifieldqa_zh", 
-    "gov_report", "qmsum", "vcsum", "trec", 
-    "nq", "triviaqa", "lsht", "passage_count",
-    "passage_retrieval_en", "passage_retrieval_zh", 
-    "lcc",
+    "hotpotqa", "2wikimqa", "musique",
+    "narrativeqa", "qasper", "multifieldqa_en",
+    "gov_report", "qmsum", "trec",
+    "nq", "triviaqa", "passage_count",
+    "passage_retrieval_en",
 ]
 
 
