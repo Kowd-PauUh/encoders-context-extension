@@ -1,5 +1,5 @@
-# Zero-Training Context Extension for Transformer Encoders via Positional Embeddings Approximation
-Official implementation of "Zero-Training Context Extension for Transformer Encoders via Positional Embeddings Approximation". Paper preprint is coming soon.
+# Zero-Training Context Extension for Transformer Encoders via Nonlinear Absolute Positional Embeddings Interpolation
+Official implementation of "Zero-Training Context Extension for Transformer Encoders via Nonlinear Absolute Positional Embeddings Interpolation". Paper preprint is coming soon.
 
 ## Models
 
