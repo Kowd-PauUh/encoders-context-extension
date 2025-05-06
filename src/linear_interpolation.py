@@ -20,6 +20,8 @@ Example:
 >>> python3 src/linear_interpolation.py --model_name_or_path="FacebookAI/roberta-base" --offset=2 --output_dir="idanylenko/roberta-base-ctx1024"
 """
 
+from tempfile import TemporaryDorectory
+
 import torch
 import torch.nn as nn
 from sentence_transformers import SentenceTransformer
@@ -122,6 +124,11 @@ def extend_context(
     # save the model if necessary
     if output_dir is not None:
         sentence_transformer.save(output_dir)
+
+    # save to temporary directory and return newly loaded model
+    with TemporaryDorectory() as temp_dir:
+        sentence_transformer.save(temp_dir)
+        sentence_transformer = SentenceTransformer(output_dir, device=device, **model_kwargs)
 
     return sentence_transformer
 
