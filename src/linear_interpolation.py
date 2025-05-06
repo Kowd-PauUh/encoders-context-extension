@@ -21,14 +21,14 @@ Example:
 """
 
 from tempfile import TemporaryDorectory
+import argparse
 
 import torch
 import torch.nn as nn
 from sentence_transformers import SentenceTransformer
-from fire import Fire
 
 
-def extend_context(
+def interpolate_embeddings(
     model_name_or_path: str,
     embeddings_attr_name: str = 'embeddings.position_embeddings',
     offset: int = 0,
@@ -133,8 +133,21 @@ def extend_context(
     return sentence_transformer
 
 
-if __name__ == '__main__':
-    def main(*args, **kwargs):
-        extend_context(*args, **kwargs)
+def main():
+    parser = argparse.ArgumentParser(description='Linear positional embeddings interpolation.')
+    parser.add_argument('--model_name_or_path', type=str, required=True)
+    parser.add_argument('--output_dir', type=str, required=True)
+    parser.add_argument('--embeddings_attr_name', type=str, default='embeddings.position_embeddings')
+    parser.add_argument('--offset', type=int, default=0)
+    args = parser.parse_args()
 
-    Fire(main)
+    interpolate_embeddings(
+        model_name_or_path=args.model_name_or_path,
+        embeddings_attr_name=args.embeddings_attr_name,
+        offset=args.offset,
+        output_dir=args.output_dir
+    )
+
+
+if __name__ == '__main__':
+    main()
