@@ -20,11 +20,6 @@ License: Apache License 2.0
 URL: https://github.com/embeddings-benchmark/mteb
 Copyright: © Hugging Face
 
-Fire (Google fire)
-License: Apache License 2.0
-URL: https://github.com/google/python-fire
-Copyright: © Google
-
 Jupyter (IPython/Jupyter Notebook)
 License: BSD 3-Clause License
 URL: https://jupyter.org
