@@ -1,6 +1,7 @@
 # modelling
 torch
 sentence-transformers
+scipy
 
 # benchmarking
 mteb
