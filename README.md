@@ -17,7 +17,7 @@ Models are available at HuggingFace:
 To install the package, use pip:
 
 ```bash
-pip install "context-extension>=0.1.1"
+pip install context-extension
 ```
 
 ## Usage
