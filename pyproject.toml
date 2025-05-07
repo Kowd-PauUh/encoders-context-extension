@@ -23,5 +23,5 @@ Homepage = "https://github.com/Kowd-PauUh"
 Repository = "https://github.com/Kowd-PauUh/encoders-context-extension"
 
 [project.scripts]
-linear = "context_extension.linear_interpolation:main"
-spline = "context_extension.spline_interpolation:main"
+extend-context-linear = "context_extension.linear_interpolation:main"
+extend-context-spline = "context_extension.spline_interpolation:main"
