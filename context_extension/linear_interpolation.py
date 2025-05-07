@@ -36,7 +36,9 @@ def interpolate_embeddings(
     model_kwargs: dict = {},
 ) -> SentenceTransformer:
     """
-    Stretches model positional embeddings starting from a given offset.
+    Extends the positional embedding space of a transformer model using 
+    linear interpolation.
+
     If the number of positional embeddings in original model is equal
     `max_position_embeddings`, then the number of new embeddings is 
     expressed as:
@@ -47,22 +49,27 @@ def interpolate_embeddings(
     Parameters
     ----------
     model_name_or_path : str
-        Path to the sentence transformer or the HF model name to which
-        the function has to be applied.
+        Path to the SentenceTransformer model or Hugging Face model name 
+        to which the interpolation will be applied.
     embeddings_attr_name : str, optional
         Path to the transformer model attribute with positional embeddings
         weights. Default is "embeddings.position_embeddings".
-    offset : str, optional
-        Number of first positional embeddings that will remain unaffected.
-        Some of the models, such as RoBERTa has additional embeddings
-        at the beginning, which are not used for embedding positions of 
-        actual tokens, so in the case of RoBERTa we would set this to 2.
-        Default is 0.
+    offset : int, optional
+        Number of initial embeddings to preserve without interpolation. 
+        For example, in RoBERTa, the first 2 embeddings correspond to 
+        non-positional tokens like `<s>` and `<pad>`. These 
+        are preserved as-is. Default is 0.
     output_dir : str | None, optional
         Output directory where the modified model has to be saved. If set
         to None, model will not be saved. Default is None.
     model_kwargs : dict, optional
-        Kwargs to be used when loading model as SentenceTransformer object. 
+        Additional keyword arguments passed to the SentenceTransformer
+        constructor.
+
+    Returns
+    -------
+    SentenceTransformer
+        A SentenceTransformer instance with extended context.
     """
     # load model
     device = model_kwargs.pop('device', 'cpu')
