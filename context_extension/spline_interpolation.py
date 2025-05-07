@@ -38,6 +38,48 @@ def interpolate_embeddings(
     output_dir: str | None = None,
     model_kwargs: dict = {},
 ) -> SentenceTransformer:
+    """
+    Extends the positional embedding space of a transformer model using 
+    cubic spline interpolation. The function replaces the original 
+    positional embeddings with a new set of interpolated embeddings 
+    to support longer input sequences without additional training.
+
+    The resulting embeddings are computed using cubic splines fit over 
+    each individual embedding dimension, allowing a smooth nonlinear 
+    approximation of extended positions. This approach is intended for 
+    zero-shot context extension, preserving the characteristics of the 
+    original embedding manifold as much as possible.
+
+    Parameters
+    ----------
+    model_name_or_path : str
+        Path to the SentenceTransformer model or Hugging Face model name 
+        to which the interpolation will be applied.
+    max_seq_length : int
+        The target maximum sequence length for the interpolated model 
+        (excluding the offset). The resulting model will support sequences 
+        of length `max_seq_length`, not counting special embeddings retained 
+        via `offset`.
+    embeddings_attr_name : str, optional
+        Path to the transformer model attribute with positional embeddings
+        weights. Default is "embeddings.position_embeddings".
+    offset : int, optional
+        Number of initial embeddings to preserve without interpolation. 
+        For example, in RoBERTa, the first 2 embeddings correspond to 
+        non-positional tokens like `<s>` and `<pad>`. These 
+        are preserved as-is. Default is 0.
+    output_dir : str | None, optional
+        Output directory where the modified model has to be saved. If set
+        to None, model will not be saved. Default is None.
+    model_kwargs : dict, optional
+        Additional keyword arguments passed to the SentenceTransformer 
+        constructor.
+
+    Returns
+    -------
+    SentenceTransformer
+        A SentenceTransformer instance with extended context.
+    """
     # load model
     device = model_kwargs.pop('device', 'cpu')
     sentence_transformer = SentenceTransformer(model_name_or_path, device=device, **model_kwargs)
