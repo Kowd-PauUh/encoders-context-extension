@@ -2,7 +2,7 @@
 Script for model benchmarking. CLI is enabled.
 
 Example:
->>> python3 src/benchmark_model.py --model_name_or_path="idanylenko/e5-large-v2-ctx1024"
+>>> python3 context_extension/benchmark_model.py --model_name_or_path="idanylenko/e5-large-v2-ctx1024"
 """
 
 import torch

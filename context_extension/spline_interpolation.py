@@ -16,8 +16,8 @@
 Script for extending encoder context. CLI is enabled.
 
 Example:
->>> python3 src/spline_interpolation.py --model_name_or_path="intfloat/e5-large-v2" --max_seq_length 1024 --offset=0 --output_dir="idanylenko/e5-large-v2-ctx1024"
->>> python3 src/spline_interpolation.py --model_name_or_path="FacebookAI/roberta-base" --max_seq_length 1024 --offset=2 --output_dir="idanylenko/roberta-base-ctx1024"
+>>> python3 context_extension/spline_interpolation.py --model_name_or_path="intfloat/e5-large-v2" --max_seq_length 1024 --offset=0 --output_dir="idanylenko/e5-large-v2-ctx1024"
+>>> python3 context_extension/spline_interpolation.py --model_name_or_path="FacebookAI/roberta-base" --max_seq_length 1024 --offset=2 --output_dir="idanylenko/roberta-base-ctx1024"
 """
 
 from tempfile import TemporaryDorectory
