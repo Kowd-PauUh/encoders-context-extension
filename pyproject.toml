@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "context-extension"
-version = "0.1.0"
+version = "0.1.1"
 description = "Zero-Training Context Extension for Transformer Encoders via Nonlinear Absolute Positional Embeddings Interpolation"
 readme = "README.md"
 requires-python = ">=3.8"
