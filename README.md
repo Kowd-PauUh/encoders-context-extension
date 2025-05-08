@@ -26,6 +26,8 @@ After installing the package you may use `extend-context` scripts for embeddings
 
 Recommended option is to set `--interpolation_type=cubic` as this provides smooth interpolation in contrast to linear interpolation. For models like RoBERTa that use special tokens in the first few positions, remember to set appropriate `--offset` argument. Too big `--max_seq_length` argument values may result in performance degradation.
 
+Use `extend-context --help` to see all available options and parameters.
+
 ### Spline Interpolation
 
 Use this for smooth, nonlinear interpolation:
