@@ -20,6 +20,7 @@ Example:
 >>> python3 context_extension/spline_interpolation.py --model_name_or_path="FacebookAI/roberta-base" --max_seq_length 1024 --offset=2 --output_dir="idanylenko/roberta-base-ctx1024"
 """
 
+from typing import Literal
 from tempfile import TemporaryDirectory
 import argparse
 
@@ -35,20 +36,15 @@ def interpolate_embeddings(
     max_seq_length: int,
     embeddings_attr_name: str = 'embeddings.position_embeddings',
     offset: int = 0,
+    interpolation_type: Literal['linear', 'quadratic', 'cubic'] = 'cubic',
     output_dir: str | None = None,
     model_kwargs: dict = {},
 ) -> SentenceTransformer:
     """
     Extends the positional embedding space of a transformer model using 
-    cubic spline interpolation. The function replaces the original 
+    given interpolation type. The function replaces the original 
     positional embeddings with a new set of interpolated embeddings 
     to support longer input sequences without additional training.
-
-    The resulting embeddings are computed using cubic splines fit over 
-    each individual embedding dimension, allowing a smooth nonlinear 
-    approximation of extended positions. This approach is intended for 
-    zero-shot context extension, preserving the characteristics of the 
-    original embedding manifold as much as possible.
 
     Parameters
     ----------
@@ -68,6 +64,8 @@ def interpolate_embeddings(
         For example, in RoBERTa, the first 2 embeddings correspond to 
         non-positional tokens like `<s>` and `<pad>`. These 
         are preserved as-is. Default is 0.
+    interpolation_type : Literal['linear', 'quadratic', 'cubic'], optional
+        Type of interpolation to apply. Default is 'cubic'.
     output_dir : str | None, optional
         Output directory where the modified model has to be saved. If set
         to None, model will not be saved. Default is None.
@@ -91,14 +89,14 @@ def interpolate_embeddings(
         embeddings = getattr(embeddings, attr_name)
     weight = np.array(embeddings.weight.clone().detach().tolist())
 
-    # interpolate embeddings using spline
+    # interpolate embeddings
     nembs = weight.shape[0]
     ndims = weight.shape[1]
     stretched_weight = np.empty((max_seq_length + offset, ndims))
     stretched_weight[:offset] = weight[:offset]
     for dim in range(ndims):
         y = weight[offset:, dim]
-        spline = interp1d(np.arange(len(y)), y, kind='cubic')
+        spline = interp1d(np.arange(len(y)), y, kind=interpolation_type)
 
         x = np.linspace(0, len(y) - 1, max_seq_length)
         stretched_weight[offset:, dim] = spline(x)
@@ -136,20 +134,24 @@ def interpolate_embeddings(
         return SentenceTransformer(output_dir, device=device, **model_kwargs)
 
     # save to temporary directory and return newly loaded model
-    with TemporaryDorectory() as temp_dir:
+    with TemporaryDirectory() as temp_dir:
         sentence_transformer.save(temp_dir)
-        sentence_transformer = SentenceTransformer(output_dir, device=device, **model_kwargs)
+        sentence_transformer = SentenceTransformer(temp_dir, device=device, **model_kwargs)
 
     return sentence_transformer
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Nonlinear (spline) positional embeddings interpolation.')
+    parser = argparse.ArgumentParser(description='Positional embeddings interpolation.')
     parser.add_argument('--model_name_or_path', type=str, required=True)
     parser.add_argument('--max_seq_length', type=int, required=True)
     parser.add_argument('--output_dir', type=str, required=True)
     parser.add_argument('--embeddings_attr_name', type=str, default='embeddings.position_embeddings')
     parser.add_argument('--offset', type=int, default=0)
+    parser.add_argument(
+        '--interpolation_type', type=str, default='cubic',
+        help='Type of interpolation. Must be one of: linear, quadratic, cubic.'
+    )
     args = parser.parse_args()
 
     interpolate_embeddings(
@@ -157,6 +159,7 @@ def main():
         max_seq_length=args.max_seq_length,
         embeddings_attr_name=args.embeddings_attr_name,
         offset=args.offset,
+        interpolation_type=args.interpolation_type,
         output_dir=args.output_dir
     )
 
