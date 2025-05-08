@@ -46,4 +46,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model_kwargs = json.loads(args.model_kwargs)
-    results = benchmark_model(args.model_name_or_path, args.tasks, **model_kwargs)
+    benchmark_model(args.model_name_or_path, args.tasks, **model_kwargs)
