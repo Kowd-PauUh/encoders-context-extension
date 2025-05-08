@@ -23,6 +23,7 @@ Example:
 from typing import Literal
 from tempfile import TemporaryDirectory
 import argparse
+import logging
 
 import torch
 import torch.nn as nn
@@ -39,6 +40,7 @@ def interpolate_embeddings(
     interpolation_type: Literal['linear', 'quadratic', 'cubic'] = 'cubic',
     output_dir: str | None = None,
     model_kwargs: dict = {},
+    verbose: bool = True,
 ) -> SentenceTransformer:
     """
     Extends the positional embedding space of a transformer model using 
@@ -72,12 +74,18 @@ def interpolate_embeddings(
     model_kwargs : dict, optional
         Additional keyword arguments passed to the SentenceTransformer 
         constructor.
+    verbose : bool, optional
+        Whether the function should log to console. Default is True.
 
     Returns
     -------
     SentenceTransformer
         A SentenceTransformer instance with extended context.
     """
+    logger = logging.getLogger(__name__)
+    if verbose:
+        logging.basicConfig(level=logging.INFO)
+
     # load model
     device = model_kwargs.pop('device', 'cpu')
     sentence_transformer = SentenceTransformer(model_name_or_path, device=device, **model_kwargs)
@@ -89,9 +97,18 @@ def interpolate_embeddings(
         embeddings = getattr(embeddings, attr_name)
     weight = np.array(embeddings.weight.clone().detach().tolist())
 
-    # interpolate embeddings
     nembs = weight.shape[0]
     ndims = weight.shape[1]
+
+    if verbose:
+        logger.info(f'Loaded model from:       {model_name_or_path}')
+        logger.info(f'Original max_seq_length: {nembs}')
+        logger.info(f'Target max_seq_length:   {max_seq_length}')
+        logger.info(f'Offset:                  {offset}')
+        logger.info(f'Interpolation type:      {interpolation_type}')
+        logger.info(f'Embedding dimension:     {ndims}')
+
+    # interpolate embeddings
     stretched_weight = np.empty((max_seq_length + offset, ndims))
     stretched_weight[:offset] = weight[:offset]
     for dim in range(ndims):
@@ -131,6 +148,9 @@ def interpolate_embeddings(
     # save the model if necessary
     if output_dir is not None:
         sentence_transformer.save(output_dir)
+        if verbose:
+            logger.info(f'Model saved to:          {output_dir}')
+
         return SentenceTransformer(output_dir, device=device, **model_kwargs)
 
     # save to temporary directory and return newly loaded model
@@ -152,6 +172,7 @@ def main():
         '--interpolation_type', type=str, default='cubic',
         help='Type of interpolation. Must be one of: linear, quadratic, cubic.'
     )
+    parser.add_argument('--verbose', type=bool, default=True)
     args = parser.parse_args()
 
     interpolate_embeddings(
@@ -160,7 +181,8 @@ def main():
         embeddings_attr_name=args.embeddings_attr_name,
         offset=args.offset,
         interpolation_type=args.interpolation_type,
-        output_dir=args.output_dir
+        output_dir=args.output_dir,
+        verbose=args.verbose,
     )
 
 
