@@ -24,6 +24,7 @@ from typing import Literal
 from tempfile import TemporaryDirectory
 import argparse
 import logging
+import json
 
 import torch
 import torch.nn as nn
@@ -43,28 +44,28 @@ def interpolate_embeddings(
     verbose: bool = True,
 ) -> SentenceTransformer:
     """
-    Extends the positional embedding space of a transformer model using 
-    given interpolation type. The function replaces the original 
-    positional embeddings with a new set of interpolated embeddings 
+    Extends the positional embedding space of a transformer model using
+    given interpolation type. The function replaces the original
+    positional embeddings with a new set of interpolated embeddings
     to support longer input sequences without additional training.
 
     Parameters
     ----------
     model_name_or_path : str
-        Path to the SentenceTransformer model or Hugging Face model name 
+        Path to the SentenceTransformer model or Hugging Face model name
         to which the interpolation will be applied.
     max_seq_length : int
-        The target maximum sequence length for the interpolated model 
-        (excluding the offset). The resulting model will support sequences 
-        of length `max_seq_length`, not counting special embeddings retained 
+        The target maximum sequence length for the interpolated model
+        (excluding the offset). The resulting model will support sequences
+        of length `max_seq_length`, not counting special embeddings retained
         via `offset`.
     embeddings_attr_name : str, optional
         Path to the transformer model attribute with positional embeddings
         weights. Default is "embeddings.position_embeddings".
     offset : int, optional
-        Number of initial embeddings to preserve without interpolation. 
-        For example, in RoBERTa, the first 2 embeddings correspond to 
-        non-positional tokens like `<s>` and `<pad>`. These 
+        Number of initial embeddings to preserve without interpolation.
+        For example, in RoBERTa, the first 2 embeddings correspond to
+        non-positional tokens like `<s>` and `<pad>`. These
         are preserved as-is. Default is 0.
     interpolation_type : Literal['linear', 'quadratic', 'cubic'], optional
         Type of interpolation to apply. Default is 'cubic'.
@@ -72,7 +73,7 @@ def interpolate_embeddings(
         Output directory where the modified model has to be saved. If set
         to None, model will not be saved. Default is None.
     model_kwargs : dict, optional
-        Additional keyword arguments passed to the SentenceTransformer 
+        Additional keyword arguments passed to the SentenceTransformer
         constructor.
     verbose : bool, optional
         Whether the function should log to console. Default is True.
@@ -176,7 +177,7 @@ def main():
             'The target maximum sequence length for the interpolated model '
             '(excluding the offset). The resulting model will support sequences '
             'of length `max_seq_length`, not counting special embeddings retained '
-            'via `offset`.
+            'via `offset`.'
         )
     )
     parser.add_argument(
@@ -206,8 +207,15 @@ def main():
         '--interpolation_type', type=str, default='cubic',
         help='Type of interpolation. Must be one of: linear, quadratic, cubic.'
     )
+    parser.add_argument(
+        '--model_kwargs', type=str, default='{}',
+        help='Additional keyword arguments for the model in JSON format. Default is "{}".'
+    )
     parser.add_argument('--verbose', type=bool, default=True)
     args = parser.parse_args()
+
+    # parse model_kwargs from JSON string
+    model_kwargs = json.loads(args.model_kwargs)
 
     interpolate_embeddings(
         model_name_or_path=args.model_name_or_path,
@@ -216,6 +224,7 @@ def main():
         offset=args.offset,
         interpolation_type=args.interpolation_type,
         output_dir=args.output_dir,
+        model_kwargs=model_kwargs,
         verbose=args.verbose,
     )
 
