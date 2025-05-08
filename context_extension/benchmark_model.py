@@ -29,6 +29,7 @@ def benchmark_model(
     # load model
     device = model_kwargs.pop('device', 'cuda' if torch.cuda.is_available() else 'cpu')
     model = SentenceTransformer(model_name_or_path, device=device, **model_kwargs)
+    model.model_card_data.model_name = model_name_or_path
 
     # run the evaluation
     tasks = mteb.get_tasks(tasks=tasks)
