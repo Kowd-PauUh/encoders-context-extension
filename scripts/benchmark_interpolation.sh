@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# the benchmarking results will be written under results/ directory by MTEB 
+
 models="intfloat/e5-large-v2 FacebookAI/roberta-large"
 interpolations="linear cubic"
 ctx_space="512 1024 1536 2048 2560 3072"
