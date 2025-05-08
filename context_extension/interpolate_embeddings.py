@@ -163,11 +163,45 @@ def interpolate_embeddings(
 
 def main():
     parser = argparse.ArgumentParser(description='Positional embeddings interpolation.')
-    parser.add_argument('--model_name_or_path', type=str, required=True)
-    parser.add_argument('--max_seq_length', type=int, required=True)
-    parser.add_argument('--output_dir', type=str, required=True)
-    parser.add_argument('--embeddings_attr_name', type=str, default='embeddings.position_embeddings')
-    parser.add_argument('--offset', type=int, default=0)
+    parser.add_argument(
+        '--model_name_or_path', type=str, required=True,
+        help=(
+            'Path to the SentenceTransformer model or Hugging Face model name '
+            'to which the interpolation will be applied.'
+        )
+    )
+    parser.add_argument(
+        '--max_seq_length', type=int, required=True,
+        help=(
+            'The target maximum sequence length for the interpolated model '
+            '(excluding the offset). The resulting model will support sequences '
+            'of length `max_seq_length`, not counting special embeddings retained '
+            'via `offset`.
+        )
+    )
+    parser.add_argument(
+        '--output_dir', type=str, required=True,
+        help=(
+            'Output directory where the modified model has to be saved. If set '
+            'to None, model will not be saved. Default is None.'
+        )
+    )
+    parser.add_argument(
+        '--embeddings_attr_name', type=str, default='embeddings.position_embeddings',
+        help=(
+            'Path to the transformer model attribute with positional embeddings '
+            'weights. Default is "embeddings.position_embeddings".'
+        )
+    )
+    parser.add_argument(
+        '--offset', type=int, default=0,
+        help=(
+            'Number of initial embeddings to preserve without interpolation. '
+            'For example, in RoBERTa, the first 2 embeddings correspond to '
+            'non-positional tokens like `<s>` and `<pad>`. These '
+            'are preserved as-is. Default is 0.'
+        )
+    )
     parser.add_argument(
         '--interpolation_type', type=str, default='cubic',
         help='Type of interpolation. Must be one of: linear, quadratic, cubic.'
