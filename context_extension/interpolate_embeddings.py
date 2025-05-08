@@ -211,7 +211,7 @@ def main():
         '--model_kwargs', type=str, default='{}',
         help='Additional keyword arguments for the model in JSON format. Default is "{}".'
     )
-    parser.add_argument('--verbose', type=bool, default=True)
+    parser.add_argument('--quiet', action='store_true', help='Suppress console logs.')
     args = parser.parse_args()
 
     # parse model_kwargs from JSON string
@@ -225,7 +225,7 @@ def main():
         interpolation_type=args.interpolation_type,
         output_dir=args.output_dir,
         model_kwargs=model_kwargs,
-        verbose=args.verbose,
+        verbose=not args.quiet,
     )
 
 
