@@ -148,6 +148,7 @@ def interpolate_embeddings(
 
     # save the model if necessary
     if output_dir is not None:
+        sentence_transformer.model_card_data.model_name = output_dir
         sentence_transformer.save(output_dir)
         if verbose:
             logger.info(f'Model saved to:          {output_dir}')
