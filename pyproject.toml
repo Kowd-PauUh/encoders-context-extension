@@ -42,3 +42,6 @@ Repository = "https://github.com/Kowd-PauUh/encoders-context-extension"
 
 [project.scripts]
 extend-context = "context_extension.interpolate_embeddings:main"
+
+[tool.setuptools.packages.find]
+exclude = ["paper*"]
