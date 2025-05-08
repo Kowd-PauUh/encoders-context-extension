@@ -5,10 +5,12 @@ Example:
 >>> python3 context_extension/benchmark_model.py --model_name_or_path="idanylenko/e5-large-v2-ctx1024"
 """
 
+import argparse
+import json
+
 import torch
 from sentence_transformers import SentenceTransformer
 import mteb
-from fire import Fire
 
 
 TASK_LIST = [
@@ -22,7 +24,6 @@ TASK_LIST = [
 def benchmark_model(
     model_name_or_path: str,
     tasks: list[str] = TASK_LIST,
-    output_dir: str | None = None,
     model_kwargs: dict = {},
 ):
     # load model
@@ -38,7 +39,11 @@ def benchmark_model(
 
 
 if __name__ == '__main__':
-    def main(*args, **kwargs):
-        benchmark_model(*args, **kwargs)
+    parser = argparse.ArgumentParser(description="Benchmark a SentenceTransformer model on MTEB tasks.")
+    parser.add_argument('--model_name_or_path', type=str, required=True, help='Model path or HuggingFace model name.')
+    parser.add_argument('--tasks', type=str, nargs='*', default=TASK_LIST, help='List of task names to evaluate on.')
+    parser.add_argument('--model_kwargs', type=str, default="{}", help='Additional keyword arguments as JSON string.')
+    args = parser.parse_args()
 
-    Fire(main)
+    model_kwargs = json.loads(args.model_kwargs)
+    results = benchmark_model(args.model_name_or_path, args.tasks, **model_kwargs)
