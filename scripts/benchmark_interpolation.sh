@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# the benchmarking results will be written under results/ directory by MTEB 
+# the benchmarking results will be written under results/ directory
 
-models="intfloat/e5-large-v2 FacebookAI/roberta-large"
+models="intfloat/e5-large-v2 FacebookAI/roberta-large Snowflake/snowflake-arctic-embed-l"
 interpolations="linear cubic"
 ctx_space="512 1024 1536 2048 2560 3072"
 
@@ -18,6 +18,9 @@ for model in $models; do
             fi
             if [ "$model" = "FacebookAI/roberta-large" ]; then
                 offset=2
+            fi
+            if [ "$model" = "Snowflake/snowflake-arctic-embed-l" ]; then
+                offset=0
             fi
 
             model_dir=$model-ctx$ctx-$interpolation
