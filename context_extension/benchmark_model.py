@@ -42,7 +42,7 @@ def benchmark_model(
     logger = logging.getLogger(__name__)
 
     model_kwargs = model_kwargs or {}
-    encode_kwargs = (encode_kwargs or {'batch_size': 128}) | {
+    encode_kwargs = (encode_kwargs or {'batch_size': 32}) | {
         'convert_to_tensor': True,
         'show_progress_bar': True,
     }
