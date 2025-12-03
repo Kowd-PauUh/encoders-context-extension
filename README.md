@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17807059.svg)](https://doi.org/10.5281/zenodo.17807059)
+
 # Zero-Training Context Extension for Transformer Encoders via Nonlinear Absolute Positional Embeddings Interpolation
 
 Official implementation of "Zero-Training Context Extension for Transformer Encoders via Nonlinear Absolute Positional Embeddings Interpolation". Paper preprint is coming soon.
@@ -54,4 +56,18 @@ extend-context \
   --offset=0 \
   --interpolation_type=linear \
   --output_dir="intfloat/e5-large-v2-ctx1024-linear"
+```
+
+## Citation
+
+```bibtex
+@software{danylenko2025zero,
+author = {Danylenko, Ivan},
+doi = {10.5281/zenodo.17807059},
+month = may,
+title = {{Zero-Training Context Extension for Transformer Encoders via Nonlinear Absolute Positional Embeddings Interpolation}},
+url = {https://github.com/Kowd-PauUh/encoders-context-extension},
+version = {0.1.3},
+year = {2025}
+}
 ```
